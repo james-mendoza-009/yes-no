@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Question</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 80px;
+      position: relative;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 32px;
+    }
+
+    button {
+      padding: 10px 25px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #noBtn {
+      position: absolute;
+    }
+
+    .yesClone {
+      position: absolute;
+      padding: 10px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 11;
+    }
+
+    .stackedImg {
+      position: absolute;
+      max-width: 250px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Are you gay?</h1>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <script>
+    alert("NAKAKAAMOY AKO NG KABA...   KABAKLAAN");
+
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    const noImages = [
+      "image1.jpeg",
+      "image2.jpeg",
+      "image3.png",
+      "image4.jpg"
+    ];
+
+    const yesImage = "yes.jpeg";
+
+    let noClickCount = 0;
+    const SAFE_PADDING = 10; 
+
+    function getSafeRandomPosition(element) {
+      const rect = element.getBoundingClientRect();
+
+      const maxX = window.innerWidth - rect.width - SAFE_PADDING;
+      const maxY = window.innerHeight - rect.height - SAFE_PADDING;
+
+      const x = Math.random() * Math.max(maxX, SAFE_PADDING);
+      const y = Math.random() * Math.max(maxY, SAFE_PADDING);
+
+      return {
+        x: Math.max(x, SAFE_PADDING),
+        y: Math.max(y, SAFE_PADDING)
+      };
+    }
+
+    function spawnImage(src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.className = "stackedImg";
+
+      document.body.appendChild(img);
+
+      // wait for img
+      img.onload = () => {
+        const pos = getSafeRandomPosition(img);
+        img.style.left = pos.x + "px";
+        img.style.top = pos.y + "px";
+      };
+    }
+
+    noBtn.addEventListener("click", () => {
+      noClickCount++;
+
+      // Move NO 
+      const btnPos = getSafeRandomPosition(noBtn);
+      noBtn.style.left = btnPos.x + "px";
+      noBtn.style.top = btnPos.y + "px";
+
+      // Stack images 
+      spawnImage(noImages[(noClickCount - 1) % noImages.length]);
+
+      // 5thno
+      if (noClickCount === 5) {
+        spawnYesButtons();
+      }
+    });
+
+    function spawnYesButtons() {
+      for (let i = 0; i < 20; i++) {
+        const yesClone = document.createElement("button");
+        yesClone.textContent = "Yes";
+        yesClone.className = "yesClone";
+
+        document.body.appendChild(yesClone);
+
+        const pos = getSafeRandomPosition(yesClone);
+        yesClone.style.left = pos.x + "px";
+        yesClone.style.top = pos.y + "px";
+
+        yesClone.addEventListener("click", yesClicked);
+      }
+    }
+
+    function yesClicked() {
+      spawnImage(yesImage);
+
+      noBtn.style.display = "none";
+      yesBtn.style.display = "none";
+
+      document.querySelectorAll(".yesClone").forEach(btn => btn.remove());
+    }
+
+    yesBtn.addEventListener("click", yesClicked);
+  </script>
+
+</body>
+</html>
